@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+
+switch-light(){
+	kvantummanager --set WhiteSur
+	plasma-apply-colorscheme WhiteSur
+}
+
+switch-dark(){
+	kvantummanager --set WhiteSurDark
+	plasma-apply-colorscheme WhiteSurDark
+}
+
+if [[ $1 == "light" ]];then
+	switch-light
+elif [[ $1 == "dark" ]];then
+	switch-dark
+fi

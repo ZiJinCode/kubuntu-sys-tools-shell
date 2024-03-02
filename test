@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+
+source ./common
+
+main() {
+    echo "main code"
+    declare -A properties
+    global_commands=()
+    global_commands[0]='-a'
+    global_commands[1]='-b'
+    global_commands[2]='-c'
+
+	echo "no command"
+	exit 1
+
+    init_properties $@
+    printProperties properties
+}
+main $@

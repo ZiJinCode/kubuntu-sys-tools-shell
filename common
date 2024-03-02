@@ -1,0 +1,197 @@
+#!/bin/sh
+
+# param
+
+# ---------- Main Variable ----------
+MAIN_PATH="$(dirname $(cd $(dirname $0);pwd))"
+SCRIPT_PATH="$MAIN_PATH/script"
+SCRIPT_FILE_PATH="$SCRIPT_PATH/$(basename $0)"
+
+ORIGINAL_USER="$SUDO_USER"
+ORIGINAL_GROUP="$(id -gn $ORIGINAL_USER)"
+
+# # Upload common shell file:
+# source $SCRIPT_PATH/common
+# printOut $SCRIPT_PATH
+
+_OUT='>>> '
+_ERROR='>>> !ERROR: '
+_WARNING='>>> WARNING: '
+
+_PARTING_LINE="==================================="
+_PARTING_LINE_F="-----------------------------------"
+# declare -A properties
+# commands=()
+# -----------------------------------
+
+
+# -------------- Base Function --------------
+
+# param1: massage
+printERROR() {
+    echo -e "\033[31m${_ERROR}$1\033[0m"
+}
+
+# param1: massage
+printWARNING() {
+    echo -e "\033[33m${_WARNING}$1\033[0m"
+}
+
+# param1: massage
+printOut() {
+    echo -e "$_OUT $1"
+}
+
+printVariable() {
+    printOut $_PARTING_LINE
+    printOut "MAIN_PATH: $MAIN_PATH"
+    printOut "SCRIPT_PATH: $SCRIPT_PATH"
+    printOut "SCRIPT_FILE_PATH: $SCRIPT_FILE_PATH"
+    printOut $_PARTING_LINE
+}
+
+# param1: properties
+printProperties() {
+    local -n local_properties=$1
+    # Print Properties
+    printOut $_PARTING_LINE
+    for key in ${!local_properties[@]};do
+        printOut "K: $key -> V: ${local_properties["$key"]}}"
+    done
+    printOut $_PARTING_LINE
+}
+
+# param1: commands
+# param2: command
+check_command() {
+    local -n local_commands=$1
+    local local_command=$2
+    for command in ${local_commands[@]};do
+        if [[ $command == $local_command ]];then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# param1: check dir path
+checkMkdir() {
+    if [ ! -d $1 ];then
+        sudo mkdir -p $1
+        chmod 777 $1
+        return 0
+    fi
+    return 1
+}
+
+# param1: check dir path
+checkRmdir() {
+    if [ -d $1 ];then
+        sudo rm -rf -p $1
+        return 0
+    fi
+    return 1
+}
+
+# param1: isExist dir path
+isExistPath() {
+    if [ -d $1 ];then
+        return 0
+    fi
+    return 1
+}
+
+# initProperties
+init_properties() {
+    ## Init Properties
+    while [[ $# -gt 0 ]];do
+        # Key
+        check_command global_commands $1
+        if [[ $? == '0' ]];then
+            key=$1
+        else
+            printERROR "global_commands init ERROR"
+            exit 1
+        fi
+
+        # Value
+        check_command global_commands $2
+        if [[ $? == '0' ]];then
+            value=''
+        else
+            if [[ -z $2 ]];then
+                value=''
+            else
+                value=$2
+            fi
+        fi
+
+        setProperty properties $key $value
+        if [[ -z $value ]];then shift 1; else shift 2; fi
+    done
+}
+
+# param1: properties
+# param2: key
+# param3: value
+setProperty() {
+    local -n local_properties=$1
+    local key=$2
+    local value=$3
+
+    local_properties["$key"]=$value
+}
+
+# param1: properties
+# param2: key
+isExistKey() {
+    local -n local_properties=$1
+    local key=$2
+    for _key in ${!local_properties[@]};do
+        if [[ $key == $_key ]];then
+            return 0
+        fi
+    done
+    return 1
+}
+
+# ---------------- copy base code ---------------------
+
+# ## Init Properties
+# while [[ $# -gt 0 ]];do
+#     # Key
+#     check_command commands $1
+#     if [[ $? == '0' ]];then
+#         key=$1
+#     else
+#         printERROR "Commands init ERROR"
+#         exit 1
+#     fi
+
+#     # Value
+#     check_command commands $2
+#     if [[ $? == '0' ]];then
+#         value=''
+#     else
+#         if [[ -z $2 ]];then
+#             value=''
+#         else
+#             value=$2
+#         fi
+#     fi
+
+#     setProperty properties $key $value
+#     if [[ -z $value ]];then shift 1; else shift 2; fi 
+# done
+
+# Main
+## print all variables
+printVariable
+sleep 2
+## check sudo
+if [[ $EUID -ne 0 ]]; then
+    printERROR "Please execute the command with root privileges."
+    exit 1
+fi
+
+printOut $_PARTING_LINE_F

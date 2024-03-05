@@ -1,0 +1,23 @@
+#!/usr/bin/bash
+
+source ./common
+
+declare -A properties
+global_commands=(
+    '--no-print'
+)
+
+echo "test1 \$@ ---> $@}"
+
+
+
+main() {
+    init_properties $@
+    printProperties properties
+
+    isExistKey properties '--no-print'
+    if [[ $? == '0' ]];then
+        echo "test 1 ${properties['--no-print']}"
+    fi
+}
+main $@

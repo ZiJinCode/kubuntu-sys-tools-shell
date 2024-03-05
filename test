@@ -2,18 +2,37 @@
 
 source ./common
 
+declare -A properties
+global_commands=(
+	'test1'
+	'test2'
+)
+
+t_test1() {
+	echo ${properties['test1']}
+	./test1 ${properties['test1']}
+}
+
+t_test2() {
+	echo ${properties['test2']}
+	./test2 ${properties['test2']}
+}
+
 main() {
     echo "main code"
-    declare -A properties
-    global_commands=()
-    global_commands[0]='-a'
-    global_commands[1]='-b'
-    global_commands[2]='-c'
-
-	echo "no command"
-	exit 1
-
     init_properties $@
     printProperties properties
+
+	isExistKey properties 'test1'
+	if [[ $? == '0' ]];then
+		t_test1
+	fi
+
+	isExistKey properties 'test2'
+	if [[ $? == '0' ]];then
+		t_test2
+	fi
+
+	printOut $_PARTING_LINE_F
 }
 main $@

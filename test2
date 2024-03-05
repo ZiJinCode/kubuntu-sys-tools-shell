@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+
+source ./common
+
+declare -A properties
+global_commands=(
+    '--no-echo'
+)
+main() {
+    init_properties $@
+
+    isExistKey properties ${global_commands['--no-echo']}
+    if [[ $? == '0' ]];then
+        echo "test 2 ${properties['--no-echo']}"
+    fi
+}
+main $@

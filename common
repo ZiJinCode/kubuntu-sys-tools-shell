@@ -3,8 +3,9 @@
 # param
 
 # ---------- Main Variable ----------
-MAIN_PATH="$(dirname $(cd $(dirname $0);pwd))"
-SCRIPT_PATH="$MAIN_PATH/script"
+# $(cd $(dirname $0);pwd)
+MAIN_PATH="$(cd $(dirname $0);pwd)"
+SCRIPT_PATH="$MAIN_PATH"
 SCRIPT_FILE_PATH="$SCRIPT_PATH/$(basename $0)"
 
 ORIGINAL_USER="$SUDO_USER"
@@ -93,6 +94,15 @@ checkRmdir() {
     return 1
 }
 
+# check sudo
+## no sudo exit 1
+check_sudo() {
+    if [[ $EUID -ne 0 ]]; then
+        printERROR "Please execute the command with root privileges."
+        exit 1
+    fi
+}
+
 # param1: isExist dir path
 isExistPath() {
     if [ -d $1 ];then
@@ -155,43 +165,12 @@ isExistKey() {
     return 1
 }
 
-# ---------------- copy base code ---------------------
-
-# ## Init Properties
-# while [[ $# -gt 0 ]];do
-#     # Key
-#     check_command commands $1
-#     if [[ $? == '0' ]];then
-#         key=$1
-#     else
-#         printERROR "Commands init ERROR"
-#         exit 1
-#     fi
-
-#     # Value
-#     check_command commands $2
-#     if [[ $? == '0' ]];then
-#         value=''
-#     else
-#         if [[ -z $2 ]];then
-#             value=''
-#         else
-#             value=$2
-#         fi
-#     fi
-
-#     setProperty properties $key $value
-#     if [[ -z $value ]];then shift 1; else shift 2; fi 
-# done
-
+# -------------------------------------------
 # Main
-## print all variables
-printVariable
-sleep 2
-## check sudo
-if [[ $EUID -ne 0 ]]; then
-    printERROR "Please execute the command with root privileges."
-    exit 1
-fi
+## p
+#printVariable
 
 printOut $_PARTING_LINE_F
+
+echo "Sleep 2s Run Main Task"
+sleep 2

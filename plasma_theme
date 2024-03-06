@@ -1,3 +1,67 @@
 #!/usr/bin/bash
 
 source ./common
+
+declare -A properties
+global_commands=(
+    '--no-copy-colors'
+    '--no-copy-cursors'
+    '--no-copy-icons'
+    '--no-copy-plasmas'
+    '--no-copy-kvantums'
+)
+
+THEMES_DIR="$MAIN_PATH/themes"
+
+copy_colors() {
+    tar -zxvf $THEMES_DIR/colors.tar.gz -C /usr/share/color-schemes/
+}
+
+copy_cursors() {
+    tar -zxvf $THEMES_DIR/cursors.tar.gz -C /usr/share/icons    
+}
+
+copy_icons() {
+    tar -zxvf $THEMES_DIR/icons.tar.gz -C /usr/share/icons    
+}
+
+copy_plasmas() {
+    tar -zxvf $THEMES_DIR/plasma.tar.gz -C /usr/share/plasma/desktoptheme
+}
+
+copy_kvantums() {
+    tar -zxvf $THEMES_DIR/kvantums.tar.gz -C /usr/share/icons    
+}
+
+check_sudo
+main() {
+    init_properties $@
+    printProperties properties
+
+    # Main Task
+    isExistKey properties '--no-copy-colors'
+    if [[ $? == '1' ]];then
+        copy_colors
+    fi
+
+    isExistKey properties '--no-copy-cursors'
+    if [[ $? == '1' ]];then
+        copy_cursors
+    fi
+
+    isExistKey properties '--no-copy-icons'
+    if [[ $? == '1' ]];then
+        copy_icons
+    fi
+
+    isExistKey properties '--no-copy-plasma'
+    if [[ $? == '1' ]];then
+        copy_plasmas
+    fi
+
+    isExistKey properties '--no-copy-kvantums'
+    if [[ $? == '1' ]];then
+        copy_kvantums
+    fi
+}
+main $@

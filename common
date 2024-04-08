@@ -78,7 +78,7 @@ check_command() {
 # param1: check dir path
 checkMkdir() {
     if [ ! -d $1 ];then
-        sudo mkdir -p $1
+        mkdir -p $1
         chmod 777 $1
         return 0
     fi
@@ -88,10 +88,10 @@ checkMkdir() {
 # param1: check dir path
 checkRmdir() {
     if [ -d $1 ];then
-        sudo rm -rf -p $1
+        rm -rf -p $1
         return 0
     fi
-    return 1
+    return 1        
 }
 
 # check sudo

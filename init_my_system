@@ -17,28 +17,28 @@ init_properties $@
 printProperties properties
 
 init_software() {
-    apt update
+    dnf update -y
 
     # install
-    apt install -f vim gcc cmake make wget curl latte-dock plasma-discover-backend-flatpak vlc flatpak -y
-    apt install zsh zsh-common zsh-autosuggestions zsh-syntax-highlighting -y
-    apt install qt5-style-kvantum qt5-style-kvantum-themes qt5-style-kvantum-l10n -y
+    dnf install -f vim gcc cmake make wget curl latte-dock plasma-discover-flatpak vlc flatpak -y
+    dnf install zsh -y
+    dnf install kvantum -y
 
     # remove
-    apt remove kmahjongg kmines kpat ksudoku -y
+    dnf remove kmahjongg kmines kpat ksudoku -y
 }
 
 init_dir() {
     printOut "Init Dir"
 
-    mkdir -p /opt/local/kde-style
+    mkdir  -p /opt/local/kde-style
     chown "$1":"$1" -R /opt/local
     chmod 755 -R /opt
     printOut "[O] mkdir /opt"
     printOut "[O] mkdir /opt/local"
     printOut "[O] mkdir /opt/local/kde-style"
 
-    mkdir /home/$1/Projects
+    checkMkdir "/home/$1/Projects"
     chown "$1":"$1" -R /home/$1/Projects
     chmod 755 -R /home/$1/Projects
     printOut "[O] mkdir /home/$1/Projects"
@@ -54,7 +54,7 @@ init_flatpak() {
 }
 
 open_systemd_ntp() {
-    apt install systemd-timesyncd -y
+    dnf install systemd-timesyncd -y
     timedatectl set-ntp 1
 }
 
